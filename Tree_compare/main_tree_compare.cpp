@@ -47,6 +47,46 @@ int main ()
 
     ERROR_HANDLER (result);
 
+    element = 70;
+
+    result = PushNode (&root, &element, Compare);
+
+    ERROR_HANDLER (result);
+
+    element = 50;
+
+    result = PushNode (&root, &element, Compare);
+
+    ERROR_HANDLER (result);
+
+    element = 75;
+
+    result = PushNode (&root, &element, Compare);
+
+    ERROR_HANDLER (result);
+
+    element = 150;
+
+    result = PushNode (&root, &element, Compare);
+
+    ERROR_HANDLER (result);
+
+    element = 125;
+
+    result = PushNode (&root, &element, Compare);
+
+    ERROR_HANDLER (result);
+
+    element = 175;
+
+    result = PushNode (&root, &element, Compare);
+
+    ERROR_HANDLER (result);
+
+    result = DumpTree (&root, PrintData);
+
+    ERROR_HANDLER (result);
+
     result = TreeDtor (&root);
 
     ERROR_HANDLER (result);
@@ -63,8 +103,12 @@ int Compare (void* const first, void* const second)
     ASSERT (first  != NULL, "Invalid argument first = %p\n", first);
     ASSERT (second != NULL, "Invalid argument second = %p\n", second);
 
-    return ((*((size_t*) first) - *((size_t*) second)) == 0) ? 0
-            : ((*((size_t*) first) - *((size_t*) second)) > 0) ? 1 : -1;
+    LOG (DEBUG, "Function got arguments:\n"
+                "| first = %lu | second = %lu |\n",
+                *((size_t*) first), *((size_t*) second));
+
+    return (*((size_t*) first) == *((size_t*) second)) ? 0
+            : (*((size_t*) first) > *((size_t*) second)) ? 1 : -1;
 }
 
 void PrintData (void* const data, FILE* const dump_file)

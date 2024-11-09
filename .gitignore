@@ -3,3 +3,5 @@ build/*
 tree
 
 Dump_Files/*
+
+My_lib/Logger/error.txt
