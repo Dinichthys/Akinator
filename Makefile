@@ -4,12 +4,15 @@ CXXFLAGS = -D _DEBUG  -ggdb -g3 -D_FORTIFY_SOURCES=3 -std=c++17 -Og -Wall -Wextr
 all: akinator tree_compare
 
 
-akinator: clean_dump main_akinator.o akinator.o logging.o print_error.o
-	@g++ $(CXXFLAGS) build/main_akinator.o build/akinator.o build/logging.o build/print_error.o -o akinator
+akinator: clean_dump main_akinator.o akinator.o my_stdio.o logging.o print_error.o
+	@g++ $(CXXFLAGS) build/main_akinator.o build/akinator.o build/my_stdio.o build/logging.o build/print_error.o -o akinator
 
 tree_compare: clean_dump main_tree_compare.o tree_compare.o logging.o print_error.o
 	@g++ $(CXXFLAGS) build/main_tree_compare.o build/tree_compare.o build/logging.o build/print_error.o -o tree
 
+
+my_stdio.o: My_lib/My_stdio/my_stdio.cpp
+	@g++ $(CXXFLAGS) -c My_lib/My_stdio/my_stdio.cpp -o build/my_stdio.o
 
 logging.o: My_lib/Logger/logging.cpp
 	@g++ $(CXXFLAGS) -c My_lib/Logger/logging.cpp -o build/logging.o

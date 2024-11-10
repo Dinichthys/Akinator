@@ -2,6 +2,8 @@ build/*
 
 tree
 
+akinator
+
 Dump_Files/*
 
 My_lib/Logger/error.txt
