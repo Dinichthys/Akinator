@@ -7,13 +7,14 @@
 #include "../My_lib/Logger/logging.h"
 #include "../My_lib/Assert/my_assert.h"
 
-#define ERROR_HANDLER(error)                                \
-    if (error != kDoneTreeAkin)                             \
-    {                                                       \
-        fprintf (stderr, "Error number = {%d}\n", error);   \
-        TreeDtorAkin (&root);                               \
-        fclose (error_file);                                \
-        return EXIT_FAILURE;                                \
+#define ERROR_HANDLER(error)                                            \
+    if (error != kDoneTreeAkin)                                         \
+    {                                                                   \
+        fprintf (stderr, "Error number = {%d}\n"                        \
+                         "Error is \"%s\"\n", error, EnumToStr (error));  \
+        TreeDtorAkin (&root);                                           \
+        fclose (error_file);                                            \
+        return EXIT_FAILURE;                                            \
     }
 
 int main ()
@@ -27,7 +28,7 @@ int main ()
     set_log_file (error_file);
     set_log_lvl (DEBUG);
 
-    setlocale (LC_ALL, "Rus");
+    setlocale (LC_ALL, "ru_RU.utf8");
 
     node_t root = {0};
     enum TreeErrorAkin result = kDoneTreeAkin;
@@ -36,7 +37,7 @@ int main ()
 
     ERROR_HANDLER (result);
 
-    result = RunAkinator (&root);
+    result = ParseFlags (&root);
 
     ERROR_HANDLER (result);
 
