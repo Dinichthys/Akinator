@@ -47,16 +47,18 @@ enum TreeErrorAkin
     kCantReadAnswerReplay       = 10,
 
     kCantReadSubjectAkin        = 11,
-    kDidntFoundSubject          = 12,
-    kCantMakeDefinition         = 13,
 
+    kDidntFoundSubject          = 12,
+
+    kCantMakeDefinition         = 13,
     kCantCtorStackDefinition    = 14,
     kCantDtorStackDefinition    = 15,
 
-    kCantCtorStackComparison    = 16,
-    kCantDtorStackComparison    = 17,
+    kCantPopPrintComp           = 16,
+    kCantCtorStackComparison    = 17,
+    kCantDtorStackComparison    = 18,
 
-    kInvalidFlagAkin            = 18,
+    kInvalidFlagAkin            = 19,
 };
 
 enum TreeResult
@@ -68,13 +70,12 @@ enum TreeResult
 };
 
 enum TreeErrorAkin ParseFlags         (node_t* const root);
-enum TreeErrorAkin RunAkinator        (node_t* const root);
+enum TreeErrorAkin RunAkinatorFlag    (node_t* const root);
 enum TreeResult    GetAnswer          (void);
-enum TreeErrorAkin ReadTreeDataBase   (node_t* const node, char** const input_buffer);
-enum TreeErrorAkin WriteTreeDataBase  (const node_t* const node, const size_t depth, FILE* const output);
-enum TreeErrorAkin MakeDefinition     (node_t* const node, const tree_elem_t subject,
-                                       stack_t const stack);
-enum TreeErrorAkin PrintDefinition    (stack_t const stack);
+enum TreeErrorAkin CreateTreeFromDataBaseFlag (node_t* const root);
+enum TreeErrorAkin WriteTreeDataBase          (node_t* const root);
+enum TreeErrorAkin CompareSubjects    (node_t* const root);
+enum TreeErrorAkin DefinitionFlag     (node_t* const root);
 enum TreeErrorAkin TreeCtorAkin       (node_t* const node, const tree_elem_t data);
 enum TreeErrorAkin TreeDtorAkin       (node_t* const root);
 enum TreeErrorAkin PushNodeAkin       (node_t* const node, const tree_elem_t element, const bool right);

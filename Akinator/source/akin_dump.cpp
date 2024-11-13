@@ -98,7 +98,7 @@ static enum TreeErrorAkin PrintNodeInfoAkin (const node_t* const node, FILE* con
     {
         fprintf (dump_file, "\t\"node%p\"\n\t[\n"
                             "\t\tlabel = \""
-                            "{ <f0> Оно \t%s? |"
+                            "{ <f0> Оно %s? |"
                             "{ <f1> left = %p |"
                             " <f2> right = %p } }\"\n"
                             "\t\tshape = \"record\"\n"

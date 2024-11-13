@@ -7,8 +7,99 @@
 #include "../../My_lib/Assert/my_assert.h"
 #include "../../My_lib/Logger/logging.h"
 #include "../../My_lib/My_stdio/my_stdio.h"
+#include "../../My_lib/helpful.h"
 
-enum TreeErrorAkin ReadTreeDataBase (node_t* const node, char** const input_buffer)
+static enum TreeErrorAkin ReadTreeDataBase         (node_t* const node, char** const input_buffer);
+static enum TreeErrorAkin WriteTreeDataBaseInFile  (const node_t* const node,
+                                                    const size_t depth, FILE* const output);
+
+enum TreeErrorAkin CreateTreeFromDataBaseFlag (node_t* const root)
+{
+    ASSERT (root != NULL, "Invalid argument root = %p\n", root);
+
+    enum TreeErrorAkin result = kDoneTreeAkin;
+
+    FILE* input_file = NULL;
+    char file_name [kLenFileName] = "";
+
+    fprintf (stdout, "А теперь введи имя файла, где находится твоя база данных\n");
+    if (fgets (file_name, kLenFileName, stdin) == NULL)
+    {
+        return kCantReadNameOfFileAkin;
+    }
+
+    if (strchr (file_name, '\n') != NULL)
+    {
+        *(strchr (file_name, '\n')) = '\0';
+    }
+
+    FOPEN (input_file, file_name, "r");
+
+    if (input_file == NULL)
+    {
+        return kCantOpenDataBase;
+    }
+
+    size_t size_input = size_of_file (input_file);
+
+    char* input_buffer = (char*) calloc (size_input, sizeof (char));
+    if (input_buffer == NULL)
+    {
+        return kCantCallocInputBuffer;
+    }
+
+    if (fread (input_buffer, sizeof (char), size_input, input_file) != size_input)
+    {
+        FREE_AND_NULL (input_buffer);
+        return kCantReadDataBaseAkin;
+    }
+
+    char* input_buffer_for_function = input_buffer;
+
+    result = ReadTreeDataBase (root, &input_buffer_for_function);
+
+    FREE_AND_NULL (input_buffer);
+
+    fprintf (stdout, "Готово!\n");
+
+    return result;
+}
+
+enum TreeErrorAkin WriteTreeDataBase (node_t* const root)
+{
+    ASSERT (root != NULL, "Invalid argument root = %p\n", root);
+
+    fprintf (stdout, "Тогда напиши имя выходного файла\n");
+
+    enum TreeErrorAkin result = kDoneTreeAkin;
+
+    char file_name [kLenFileName] = {'\0'};
+    if (fgets (file_name, kLenFileName, stdin) == NULL)
+    {
+        return kCantReadNameOfFileAkin;
+    }
+
+    if (strchr (file_name, '\n') != NULL)
+    {
+        *(strchr (file_name, '\n')) = '\0';
+    }
+
+    FILE* output = NULL;
+
+    FOPEN (output, file_name, "w");
+    if (output == NULL)
+    {
+        return kCantOpenDataBase;
+    }
+
+    result = WriteTreeDataBaseInFile (root, 0, output);
+
+    FCLOSE (output);
+
+    return result;
+}
+
+static enum TreeErrorAkin ReadTreeDataBase (node_t* const node, char** const input_buffer)
 {
     ASSERT (node         != NULL, "Invalid argument node = %p\n", node);
     ASSERT (input_buffer != NULL, "Invalid argument input_buffer = %p\n", input_buffer);
@@ -58,7 +149,7 @@ enum TreeErrorAkin ReadTreeDataBase (node_t* const node, char** const input_buff
     return kDoneTreeAkin;
 }
 
-enum TreeErrorAkin WriteTreeDataBase (const node_t* const node, const size_t depth, FILE* const output)
+static enum TreeErrorAkin WriteTreeDataBaseInFile (const node_t* const node, const size_t depth, FILE* const output)
 {
     ASSERT (node   != NULL, "Invalid argument node = %p\n", node);
     ASSERT (output != NULL, "Invalid argument output = %p\n", output);
@@ -72,8 +163,8 @@ enum TreeErrorAkin WriteTreeDataBase (const node_t* const node, const size_t dep
 
     if ((node->left != NULL) && (node->right != NULL))
     {
-        WriteTreeDataBase (node->left, depth + 1, output);
-        WriteTreeDataBase (node->right, depth + 1, output);
+        WriteTreeDataBaseInFile (node->left, depth + 1, output);
+        WriteTreeDataBaseInFile (node->right, depth + 1, output);
     }
 
     for (size_t counter = 0; counter < depth; counter++)
@@ -116,12 +207,14 @@ const char* EnumToStr (const enum TreeErrorAkin error)
         CASE_ENUM_ (kCantReadAnswerReplay);
 
         CASE_ENUM_ (kCantReadSubjectAkin);
-        CASE_ENUM_ (kDidntFoundSubject);
-        CASE_ENUM_ (kCantMakeDefinition);
 
+        CASE_ENUM_ (kDidntFoundSubject);
+
+        CASE_ENUM_ (kCantMakeDefinition);
         CASE_ENUM_ (kCantCtorStackDefinition);
         CASE_ENUM_ (kCantDtorStackDefinition);
 
+        CASE_ENUM_ (kCantPopPrintComp);
         CASE_ENUM_ (kCantCtorStackComparison);
         CASE_ENUM_ (kCantDtorStackComparison);
 

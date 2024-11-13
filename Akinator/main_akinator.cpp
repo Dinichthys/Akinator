@@ -17,6 +17,13 @@
         return EXIT_FAILURE;                                            \
     }
 
+typedef void пустота;
+
+пустота ЖОПА (пустота)
+{
+    fprintf (stderr, "ЖОПА\n");
+}
+
 int main ()
 {
     FILE* const error_file = fopen ("My_lib/Logger/error.txt", "w");
@@ -29,6 +36,8 @@ int main ()
     set_log_lvl (DEBUG);
 
     setlocale (LC_ALL, "ru_RU.utf8");
+
+    ЖОПА ();
 
     node_t root = {0};
     enum TreeErrorAkin result = kDoneTreeAkin;

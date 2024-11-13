@@ -38,7 +38,9 @@ enum TreeResult GetAnswer (void)
         return kFalseResult;
     }
 
-    return kInvalAnswer;
+    fprintf (stdout, "Ответ не распознан. Повторите, пожалуйста.\n");
+
+    return GetAnswer ();
 }
 
 static bool StrCmpYes (char* const answer)
