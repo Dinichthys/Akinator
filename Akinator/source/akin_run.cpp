@@ -94,7 +94,7 @@ static enum TreeErrorAkin AddNewElemAkin (node_t* const node)
 
     fprintf (stdout, "А, точно... Я тупанул че-то\n");
 
-    fprintf (stdout, "А чем %s отличается от %s\n", element, node->data);
+    fprintf (stdout, "А чем %s отличается от %s?\n", element, node->data);
 
     if (fgets (question, kLenElement, stdin) == NULL)
     {

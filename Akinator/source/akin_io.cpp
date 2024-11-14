@@ -214,7 +214,6 @@ const char* EnumToStr (const enum TreeErrorAkin error)
         CASE_ENUM_ (kCantCtorStackDefinition);
         CASE_ENUM_ (kCantDtorStackDefinition);
 
-        CASE_ENUM_ (kCantPopPrintComp);
         CASE_ENUM_ (kCantCtorStackComparison);
         CASE_ENUM_ (kCantDtorStackComparison);
 
