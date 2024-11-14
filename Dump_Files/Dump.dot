@@ -1,0 +1,62 @@
+digraph
+{
+	fontname = "Helvetica,Arial,sans-serif";
+	node [fontname = "Helvetica,Arial,sans-serif"];
+	graph [rankdir = "TB"];
+	ranksep = 1.5;
+
+	"node0x7d7dd4e09030"
+	[
+		label = "{ <f0> Оно деревянное? |{ <f1> left = 0x50d000000040 | <f2> right = 0x50d0000002b0 } }"
+		shape = "record"
+	];
+
+	"node0x50d000000040"
+	[
+		label = "{ <f0> Оно с колбасой? |{ <f1> left = 0x50d000000110 | <f2> right = 0x50d0000001e0 } }"
+		shape = "record"
+	];
+
+	"node0x50d000000110"
+	[
+		label = "{ <f0> Хз что |{ <f1> left = (nil) | <f2> right = (nil) } }"
+		shape = "record"
+	];
+
+	"node0x50d0000001e0"
+	[
+		label = "{ <f0> бутер |{ <f1> left = (nil) | <f2> right = (nil) } }"
+		shape = "record"
+	];
+
+	"node0x50d0000002b0"
+	[
+		label = "{ <f0> Оно срубленно? |{ <f1> left = 0x50d000000380 | <f2> right = 0x50d000000450 } }"
+		shape = "record"
+	];
+
+	"node0x50d000000380"
+	[
+		label = "{ <f0> дерево |{ <f1> left = (nil) | <f2> right = (nil) } }"
+		shape = "record"
+	];
+
+	"node0x50d000000450"
+	[
+		label = "{ <f0> пень |{ <f1> left = (nil) | <f2> right = (nil) } }"
+		shape = "record"
+	];
+
+	"node0x7d7dd4e09030":f1 -> "node0x50d000000040":f0 [color = "black" label = "Нет"];
+
+	"node0x50d000000040":f1 -> "node0x50d000000110":f0 [color = "black" label = "Нет"];
+
+	"node0x50d000000040":f2 -> "node0x50d0000001e0":f0 [color = "black" label = "Да"];
+
+	"node0x7d7dd4e09030":f2 -> "node0x50d0000002b0":f0 [color = "black" label = "Да"];
+
+	"node0x50d0000002b0":f1 -> "node0x50d000000380":f0 [color = "black" label = "Нет"];
+
+	"node0x50d0000002b0":f2 -> "node0x50d000000450":f0 [color = "black" label = "Да"];
+
+}

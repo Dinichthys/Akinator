@@ -51,14 +51,14 @@ enum TreeErrorAkin
     kDidntFoundSubject          = 12,
 
     kCantMakeDefinition         = 13,
+
     kCantCtorStackDefinition    = 14,
     kCantDtorStackDefinition    = 15,
 
-    kCantPopPrintComp           = 16,
-    kCantCtorStackComparison    = 17,
-    kCantDtorStackComparison    = 18,
+    kCantCtorStackComparison    = 16,
+    kCantDtorStackComparison    = 17,
 
-    kInvalidFlagAkin            = 19,
+    kInvalidFlagAkin            = 18,
 };
 
 enum TreeResult
