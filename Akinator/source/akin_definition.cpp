@@ -11,7 +11,7 @@
 
 static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, const stack_t second_stack);
 static enum TreeErrorAkin MakeDefinition            (node_t* const node, const tree_elem_t subject,
-                                                     stack_t const stack);
+                                                     stack_t const stack, const bool answer);
 static enum TreeErrorAkin PrintDefinition           (stack_t const stack);
 
 enum TreeErrorAkin CompareSubjects (node_t* const root)
@@ -52,7 +52,7 @@ enum TreeErrorAkin CompareSubjects (node_t* const root)
 
     LOG (DEBUG, "Subject = \"%s\"\n", subject_first);
 
-    result = MakeDefinition (root, subject_first, stack_first);
+    result = MakeDefinition (root, subject_first, stack_first, true);
 
     if (result != kDoneTreeAkin)
     {
@@ -77,7 +77,7 @@ enum TreeErrorAkin CompareSubjects (node_t* const root)
 
     LOG (DEBUG, "Subject = \"%s\"\n", subject_second);
 
-    result = MakeDefinition (root, subject_second, stack_second);
+    result = MakeDefinition (root, subject_second, stack_second, true);
 
     if (result != kDoneTreeAkin)
     {
@@ -128,6 +128,7 @@ enum TreeErrorAkin DefinitionFlag (node_t* const root)
 
     if (fgets (subject, kLenElement, stdin) == NULL)
     {
+        STACK_DTOR_SHORT (stack);
         return kCantReadSubjectAkin;
     }
 
@@ -138,19 +139,21 @@ enum TreeErrorAkin DefinitionFlag (node_t* const root)
 
     LOG (DEBUG, "Subject = \"%s\"\n", subject);
 
-    result = MakeDefinition (root, subject, stack);
+    result = MakeDefinition (root, subject, stack, true);
 
     if (result != kDoneTreeAkin)
     {
+        STACK_DTOR_SHORT (stack);
         return result;
     }
 
-    fprintf (stdout, "%s такое - \n", subject);
+    fprintf (stdout, "\n%s такое - \n", subject);
 
     result = PrintDefinition (stack);
 
     if (result != kDoneTreeAkin)
     {
+        STACK_DTOR_SHORT (stack);
         return result;
     }
 
@@ -170,35 +173,48 @@ static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, 
     stack_elem first_comp = NULL;
     stack_elem second_comp = NULL;
 
-    if (stack_pop (first_stack, &first_comp) == CANT_POP)
+    STACK_ERROR result_first_stack = DONE;
+    STACK_ERROR result_second_stack = DONE;
+
+    result_first_stack = stack_pop (first_stack, &first_comp);
+
+    if (result_first_stack != CANT_POP)
     {
-        return kCantPopPrintComp;
+        LOG (DEBUG, "First comparison = \"%s\"\n", first_comp);
+
+        result_first_stack = stack_pop (first_stack, &first_data);
+
+        if (result_first_stack != CANT_POP)
+        {
+            LOG (DEBUG, "First data = \"%s\"\n", first_data);
+        }
     }
 
-    LOG (DEBUG, "First comparison = \"%s\"\n", first_comp);
+    result_second_stack = stack_pop (second_stack, &second_comp);
 
-    if (stack_pop (first_stack, &first_data) == CANT_POP)
+    if (result_second_stack != CANT_POP)
     {
-        return kCantPopPrintComp;
+        LOG (DEBUG, "Second comparison = \"%s\"\n", second_comp);
+
+        result_second_stack = stack_pop (second_stack, &second_data);
+
+        if (result_second_stack != CANT_POP)
+        {
+            LOG (DEBUG, "Second data = \"%s\"\n", second_data);
+        }
     }
 
-    LOG (DEBUG, "First data = \"%s\"\n", first_data);
-
-    if (stack_pop (second_stack, &second_comp) == CANT_POP)
+    if ((result_first_stack == CANT_POP) && (result_second_stack == CANT_POP))
     {
-        return kCantPopPrintComp;
+        fprintf (stdout, "\nСравнение завершено)\n\n");
+
+        return kDoneTreeAkin;
     }
 
-    LOG (DEBUG, "Second comparison = \"%s\"\n", second_comp);
-
-    if (stack_pop (second_stack, &second_data) == CANT_POP)
-    {
-        return kCantPopPrintComp;
-    }
-
-    LOG (DEBUG, "Second data = \"%s\"\n", second_data);
-
-    if ((strcmp (first_data, second_data) == 0) && (strcmp (first_comp, second_comp) == 0))
+    if ((result_first_stack != CANT_POP)
+        && (result_second_stack != CANT_POP)
+        && (strcmp (first_data, second_data) == 0)
+        && (strcmp (first_comp, second_comp) == 0))
     {
         fprintf (stdout, "\nДругие характеристики у них одинаковые:\n"
                          "Оно %s %s, ", first_comp, first_data);
@@ -206,14 +222,36 @@ static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, 
         return PrintDefinition (first_stack);
     }
 
-    fprintf (stdout, "Первое существо %s %s, а второе существо %s %s\n",
-                     first_comp, first_data, second_comp, second_data);
+    if ((result_first_stack != CANT_POP)
+        && (result_second_stack != CANT_POP))
+    {
+        fprintf (stdout, "\nПервое существо %s %s, а второе существо %s %s\n",
+                         first_comp, first_data, second_comp, second_data);
+    }
+
+    if ((result_first_stack != CANT_POP)
+        && (result_second_stack == CANT_POP))
+    {
+        fprintf (stdout, "\nВторое существо не имеет больше характеристик, а первое такое: \n"
+                         "Оно %s %s, ", first_comp, first_data);
+
+        return PrintDefinition (first_stack);
+    }
+
+    if ((result_first_stack == CANT_POP)
+        && (result_second_stack != CANT_POP))
+    {
+        fprintf (stdout, "\nПервое существо не имеет больше характеристик, а второе такое: \n"
+                         "Оно %s %s, ", second_comp, second_data);
+
+        return PrintDefinition (second_stack);
+    }
 
     return PrintComparisonDefinition (first_stack, second_stack);
 }
 
 static enum TreeErrorAkin MakeDefinition (node_t* const node, const tree_elem_t subject,
-                                          stack_t const stack)
+                                          stack_t const stack, const bool answer)
 {
     ASSERT (node    != NULL, "Invalid argument node = %p\n", node);
     ASSERT (subject != NULL, "Invalid argument node = %p\n", subject);
@@ -224,6 +262,24 @@ static enum TreeErrorAkin MakeDefinition (node_t* const node, const tree_elem_t 
 
     enum TreeErrorAkin result = kDoneTreeAkin;
 
+    stack_elem answer_not_in_definition = NULL;
+
+    stack_elem data_not_in_definition = NULL;
+
+    if (answer)
+    {
+        strcpy (node->answer, "");
+    }
+    else
+    {
+        strcpy (node->answer, "не");
+    }
+
+    if (stack_push (stack, node->answer) == CANT_PUSH)
+    {
+        return kCantMakeDefinition;
+    }
+
     if (strcmp (node->data, subject) == 0)
     {
         return kDoneTreeAkin;
@@ -231,6 +287,11 @@ static enum TreeErrorAkin MakeDefinition (node_t* const node, const tree_elem_t 
 
     if ((node->left == NULL) && (node->right == NULL))
     {
+        if (stack_pop (stack, &answer_not_in_definition) == CANT_POP)
+        {
+            return kCantMakeDefinition;
+        }
+
         return kDidntFoundSubject;
     }
 
@@ -239,55 +300,44 @@ static enum TreeErrorAkin MakeDefinition (node_t* const node, const tree_elem_t 
         return kCantMakeDefinition;
     }
 
-    strcpy (node->answer, "не");
+    result = MakeDefinition (node->left, subject, stack, false);
 
-    stack_elem answer = node->answer;
-
-    if (stack_push (stack, answer) == CANT_PUSH)
-    {
-        return kCantMakeDefinition;
-    }
-
-    result = MakeDefinition (node->left, subject, stack);
+    LOG (DEBUG, "For left tree result = \"%s\"\n", EnumToStr (result));
 
     if ((result == kDoneTreeAkin) || (result == kCantMakeDefinition))
     {
         return result;
     }
 
-    if (stack_pop (stack, &answer) == CANT_POP)
-    {
-        return kCantMakeDefinition;
-    }
+    result = MakeDefinition (node->right, subject, stack, true);
 
-    strcpy (node->answer, "");
-
-    if (stack_push (stack, answer) == CANT_PUSH)
-    {
-        return kCantMakeDefinition;
-    }
-
-    result = MakeDefinition (node->right, subject, stack);
+    LOG (DEBUG, "For right tree result = \"%s\"\n", EnumToStr (result));
 
     if ((result == kDoneTreeAkin) || (result == kCantMakeDefinition))
     {
         return result;
     }
-
-    if (stack_pop (stack, &answer) == CANT_POP)
-    {
-        return kCantMakeDefinition;
-    }
-
-    stack_elem data_not_in_definition = NULL;
 
     if (result == kDidntFoundSubject)
     {
+        LOG (DEBUG, "kDidntFoundSubject with both answers of token \"%s\"\n", node->data);
+
         if (stack_pop (stack, &data_not_in_definition) == CANT_POP)
         {
             return kCantMakeDefinition;
         }
+
+        LOG (DEBUG, "Check data in stack \"%s\"\n", data_not_in_definition);
+
+        if (stack_pop (stack, &answer_not_in_definition) == CANT_POP)
+        {
+            return kCantMakeDefinition;
+        }
+
+        LOG (DEBUG, "Check answer in stack \"%s\"\n", answer_not_in_definition);
     }
+
+    LOG (DEBUG, "LOH\n");
 
     return result;
 }
