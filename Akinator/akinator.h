@@ -13,6 +13,13 @@ static const size_t kLenElement             = 100;
 static const size_t kLenAnswer              = 10;
 static const size_t kDepthStack             = 10;
 
+static const char kRunFlag        [kLenFlag] = "Отгадывать";
+static const char kCreateFlag     [kLenFlag] = "Создать";
+static const char kDefinitionFlag [kLenFlag] = "Определение";
+static const char kComparisonFlag [kLenFlag] = "Сравнение";
+static const char kWriteFlag      [kLenFlag] = "Запись";
+static const char kExitFlag       [kLenFlag] = "Выход";
+
 typedef char tree_elem_t [kLenElement];
 
 typedef struct node

@@ -22,12 +22,13 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
 
     fprintf (stdout, "Это Великий и Ужасный Акинатор!\n"
                      "Для продолжения напиши:\n"
-                     " \"Отгадывать\" - чтобы Акинатор отгадал твоё СуЩеСтВо\n"
-                     " \"Создать\"    - чтобы создать дерево вариантов ответов по базе данных\n"
-                     " \"Определение\"- чтобы дать определение вашего сУщЕсТвА\n"
-                     " \"Сравнение\"  - чтобы сравнить два ваших СУЩЕСТВА\n"
-                     " \"Запись\"     - чтобы записать информацию о дереве в файл\n"
-                     " \"Выход\"      - чтобы выйти из программы\n");
+                     " \"%s\" - чтобы Акинатор отгадал твоё СуЩеСтВо\n"
+                     " \"%s\"    - чтобы создать дерево вариантов ответов по базе данных\n"
+                     " \"%s\"- чтобы дать определение вашего сУщЕсТвА\n"
+                     " \"%s\"  - чтобы сравнить два ваших СУЩЕСТВА\n"
+                     " \"%s\"     - чтобы записать информацию о дереве в файл\n"
+                     " \"%s\"      - чтобы выйти из программы\n",
+                     kRunFlag, kCreateFlag, kDefinitionFlag, kComparisonFlag, kWriteFlag, kExitFlag);
 
     while (true)
     {
@@ -40,7 +41,7 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
 
         LOG (DEBUG, "Read flag = \"%s\"", flag);
 
-        if (strcmp (flag, "Отгадывать") == 0)
+        if (strcmp (flag, kRunFlag) == 0)
         {
             result = RunAkinatorFlag (root);
 
@@ -52,7 +53,7 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
             return ReplayAkinator (root);
         }
 
-        if (strcmp (flag, "Создать") == 0)
+        if (strcmp (flag, kCreateFlag) == 0)
         {
             result = CreateTreeFromDataBaseFlag (root);
 
@@ -64,7 +65,7 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
             return ReplayAkinator (root);
         }
 
-        if (strcmp (flag, "Определение") == 0)
+        if (strcmp (flag, kDefinitionFlag) == 0)
         {
             result = DefinitionFlag (root);
 
@@ -76,7 +77,7 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
             return ReplayAkinator (root);
         }
 
-        if (strcmp (flag, "Сравнение") == 0)
+        if (strcmp (flag, kComparisonFlag) == 0)
         {
             result = CompareSubjects (root);
 
@@ -88,7 +89,7 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
             return ReplayAkinator (root);
         }
 
-        if (strcmp (flag, "Запись") == 0)
+        if (strcmp (flag, kWriteFlag) == 0)
         {
             result = WriteTreeDataBase (root);
 
@@ -100,7 +101,7 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
             return ReplayAkinator (root);
         }
 
-        if (strcmp (flag, "Выход") == 0)
+        if (strcmp (flag, kExitFlag) == 0)
         {
             return kDoneTreeAkin;
         }
