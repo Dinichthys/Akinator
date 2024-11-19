@@ -9,6 +9,8 @@
 #include "../../My_lib/My_stdio/my_stdio.h"
 #include "../../My_lib/helpful.h"
 
+static enum TreeErrorAkin DefineSubject             (node_t* const root);
+static enum TreeErrorAkin CompareSubjects           (node_t* const root);
 static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, const stack_t second_stack);
 static enum TreeErrorAkin MakeDefinition            (node_t* const node, const tree_elem_t subject,
                                                      stack_t const stack, const bool answer);
@@ -16,7 +18,125 @@ static enum TreeErrorAkin GetDefinition             (const stack_t stk,
                                                      stack_elem* const data, stack_elem* const answer);
 static enum TreeErrorAkin PrintDefinition           (stack_t const stack);
 
-enum TreeErrorAkin CompareSubjects (node_t* const root)
+enum TreeErrorAkin DefinitionFlag (node_t* const root)
+{
+    ASSERT (root != NULL, "Invalid argument root = %p\n", root);
+
+    enum TreeErrorAkin result = kDoneTreeAkin;
+
+    while (result == kDoneTreeAkin)
+    {
+        result = DefineSubject (root);
+
+        if (result != kDoneTreeAkin)
+        {
+            if (result == kDidntFoundSubject)
+            {
+                fprintf (stdout, "Нет такого объекта, попробуй ещё раз\n");
+
+                result = kDoneTreeAkin;
+                continue;
+            }
+
+            return result;
+        }
+
+        fprintf (stdout, "Готово!\n");
+
+        break;
+    }
+
+    return result;
+}
+
+enum TreeErrorAkin ComparisonFlag (node_t* const root)
+{
+    ASSERT (root != NULL, "Invalid argument root = %p\n", root);
+
+    enum TreeErrorAkin result = kDoneTreeAkin;
+
+    while (result == kDoneTreeAkin)
+    {
+        result = CompareSubjects (root);
+
+        if (result != kDoneTreeAkin)
+        {
+            if (result == kDidntFoundSubject)
+            {
+                fprintf (stdout, "Нет такого объекта, попробуй ещё раз\n");
+
+                result = kDoneTreeAkin;
+                continue;
+            }
+
+            return result;
+        }
+
+        fprintf (stdout, "Готово!\n");
+
+        break;
+    }
+
+    return result;
+}
+
+static enum TreeErrorAkin DefineSubject (node_t* const root)
+{
+    ASSERT (root != NULL, "Invalid argument root = %p\n", root);
+
+    enum TreeErrorAkin result = kDoneTreeAkin;
+
+    fprintf (stdout, "А теперь введи имя существа, определение которого ты хочешь получить\n");
+
+    stack_t stack = 0;
+
+    if (STACK_INIT_SHORT (stack, kDepthStack) == CANT_CREATE)
+    {
+        return kCantCtorStackDefinition;
+    }
+
+    tree_elem_t subject = "";
+
+    if (fgets (subject, kLenElement, stdin) == NULL)
+    {
+        STACK_DTOR_SHORT (stack);
+        return kCantReadSubjectAkin;
+    }
+
+    if (strchr (subject, '\n') != NULL)
+    {
+        *(strchr (subject, '\n')) = '\0';
+    }
+
+    LOG (DEBUG, "Subject = \"%s\"\n", subject);
+
+    result = MakeDefinition (root, subject, stack, true);
+
+    if (result != kDoneTreeAkin)
+    {
+        STACK_DTOR_SHORT (stack);
+        return result;
+    }
+
+    fprintf (stdout, "\n%s такое - \n", subject);
+
+    result = PrintDefinition (stack);
+
+    if (result != kDoneTreeAkin)
+    {
+        STACK_DTOR_SHORT (stack);
+        return result;
+    }
+
+    if (STACK_DTOR_SHORT (stack) == CANT_DESTROY)
+    {
+        return kCantDtorStackDefinition;
+    }
+
+    return result;
+}
+
+static enum TreeErrorAkin CompareSubjects (node_t* const root)
 {
     ASSERT (root != NULL, "Invalid argument root = %p\n");
 
@@ -106,62 +226,6 @@ enum TreeErrorAkin CompareSubjects (node_t* const root)
     if (STACK_DTOR_SHORT (stack_second) == CANT_DESTROY)
     {
         return kCantDtorStackComparison;
-    }
-
-    return result;
-}
-
-enum TreeErrorAkin DefinitionFlag (node_t* const root)
-{
-    ASSERT (root != NULL, "Invalid argument root = %p\n", root);
-
-    enum TreeErrorAkin result = kDoneTreeAkin;
-
-    fprintf (stdout, "А теперь введи имя существа, определение которого ты хочешь получить\n");
-
-    stack_t stack = 0;
-
-    if (STACK_INIT_SHORT (stack, kDepthStack) == CANT_CREATE)
-    {
-        return kCantCtorStackDefinition;
-    }
-
-    tree_elem_t subject = "";
-
-    if (fgets (subject, kLenElement, stdin) == NULL)
-    {
-        STACK_DTOR_SHORT (stack);
-        return kCantReadSubjectAkin;
-    }
-
-    if (strchr (subject, '\n') != NULL)
-    {
-        *(strchr (subject, '\n')) = '\0';
-    }
-
-    LOG (DEBUG, "Subject = \"%s\"\n", subject);
-
-    result = MakeDefinition (root, subject, stack, true);
-
-    if (result != kDoneTreeAkin)
-    {
-        STACK_DTOR_SHORT (stack);
-        return result;
-    }
-
-    fprintf (stdout, "\n%s такое - \n", subject);
-
-    result = PrintDefinition (stack);
-
-    if (result != kDoneTreeAkin)
-    {
-        STACK_DTOR_SHORT (stack);
-        return result;
-    }
-
-    if (STACK_DTOR_SHORT (stack) == CANT_DESTROY)
-    {
-        return kCantDtorStackDefinition;
     }
 
     return result;

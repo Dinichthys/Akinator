@@ -9,11 +9,91 @@
 #include "../../My_lib/My_stdio/my_stdio.h"
 #include "../../My_lib/helpful.h"
 
-static enum TreeErrorAkin ReadTreeDataBase         (node_t* const node, char** const input_buffer);
-static enum TreeErrorAkin WriteTreeDataBaseInFile  (const node_t* const node,
-                                                    const size_t depth, FILE* const output);
+static enum TreeErrorAkin CreateTreeFromDataBaseFlag (node_t* const root);
+static enum TreeErrorAkin WriteTreeDataBase          (node_t* const root);
+static enum TreeErrorAkin ReadTreeDataBase           (node_t* const node, char** const input_buffer);
+static enum TreeErrorAkin WriteTreeDataBaseInFile    (const node_t* const node,
+                                                      const size_t depth, FILE* const output);
 
-enum TreeErrorAkin CreateTreeFromDataBaseFlag (node_t* const root)
+enum TreeErrorAkin CreateFlag (node_t* const root)
+{
+    ASSERT (root != NULL, "invalid argument root = %p\n", root);
+
+    enum TreeErrorAkin result = kDoneTreeAkin;
+
+    while (result == kDoneTreeAkin)
+    {
+        result = CreateTreeFromDataBaseFlag (root);
+
+        if (result != kDoneTreeAkin)
+        {
+            if ((result == kCantOpenDataBase) || (result == kCantReadAnswerAddElem))
+            {
+                fprintf (stdout, "\nНевозможно открыть файл. Попробуй снова.\n");
+
+                result = kDoneTreeAkin;
+                continue;
+            }
+
+            if ((result == kCantReadDataBaseAkin) || (result == kCantCallocInputBuffer))
+            {
+                fprintf (stdout, "\nНевозможно считать из файла. Возможно, он слишком большой.\n\n"
+                                    "Выход из режима\n\n");
+
+                break;
+            }
+
+            return result;
+        }
+
+        fprintf (stdout, "Готово!\n");
+
+        break;
+    }
+
+    return result;
+}
+
+enum TreeErrorAkin WriteFlag (node_t* const root)
+{
+    ASSERT (root != NULL, "Invalid argument root = %p\n", root);
+
+    enum TreeErrorAkin result = kDoneTreeAkin;
+
+    while (result == kDoneTreeAkin)
+    {
+        result = WriteTreeDataBase (root);
+
+        if (result != kDoneTreeAkin)
+        {
+            if (result == kCantReadNameOfFileAkin)
+            {
+                fprintf (stdout, "\nНе удалось считать имя файла. Попробуй снова\n");
+
+                result = kDoneTreeAkin;
+                continue;
+            }
+
+            if (result == kCantOpenDataBase)
+            {
+                fprintf (stdout, "\nНе удалось открыть файл. Попробуй снова.\n");
+
+                result = kDoneTreeAkin;
+                continue;
+            }
+
+            return result;
+        }
+
+        fprintf (stdout, "Готово!\n");
+
+        break;
+    }
+
+    return result;
+}
+
+static enum TreeErrorAkin CreateTreeFromDataBaseFlag (node_t* const root)
 {
     ASSERT (root != NULL, "Invalid argument root = %p\n", root);
 
@@ -60,12 +140,10 @@ enum TreeErrorAkin CreateTreeFromDataBaseFlag (node_t* const root)
 
     FREE_AND_NULL (input_buffer);
 
-    fprintf (stdout, "Готово!\n");
-
     return result;
 }
 
-enum TreeErrorAkin WriteTreeDataBase (node_t* const root)
+static enum TreeErrorAkin WriteTreeDataBase (node_t* const root)
 {
     ASSERT (root != NULL, "Invalid argument root = %p\n", root);
 

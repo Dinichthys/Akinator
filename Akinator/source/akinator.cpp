@@ -55,32 +55,11 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
 
         if (strcmp (flag, kCreateFlag) == 0)
         {
-            while (result == kDoneTreeAkin)
+            result = CreateFlag (root);
+
+            if (result != kDoneTreeAkin)
             {
-                result = CreateTreeFromDataBaseFlag (root);
-
-                if (result != kDoneTreeAkin)
-                {
-                    if ((result == kCantOpenDataBase) || (result == kCantReadAnswerAddElem))
-                    {
-                        fprintf (stdout, "\nНевозможно открыть файл. Попробуй снова.\n");
-
-                        result = kDoneTreeAkin;
-                        continue;
-                    }
-
-                    if ((result == kCantReadDataBaseAkin) || (result == kCantCallocInputBuffer))
-                    {
-                        fprintf (stdout, "\nНевозможно считать из файла. Возможно, он слишком большой.\n\n"
-                                         "Выход из режима\n\n");
-
-                        break;
-                    }
-
-                    return result;
-                }
-
-                break;
+                return result;
             }
 
             return ReplayAkinator (root);
@@ -88,24 +67,11 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
 
         if (strcmp (flag, kDefinitionFlag) == 0)
         {
-            while (result == kDoneTreeAkin)
+            result = DefinitionFlag (root);
+
+            if (result != kDoneTreeAkin)
             {
-                result = DefinitionFlag (root);
-
-                if (result != kDoneTreeAkin)
-                {
-                    if (result == kDidntFoundSubject)
-                    {
-                        fprintf (stdout, "Нет такого объекта, попробуй ещё раз\n");
-
-                        result = kDoneTreeAkin;
-                        continue;
-                    }
-
-                    return result;
-                }
-
-                break;
+                return result;
             }
 
             return ReplayAkinator (root);
@@ -113,24 +79,11 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
 
         if (strcmp (flag, kComparisonFlag) == 0)
         {
-            while (result == kDoneTreeAkin)
+            result = ComparisonFlag (root);
+
+            if (result != kDoneTreeAkin)
             {
-                result = CompareSubjects (root);
-
-                if (result != kDoneTreeAkin)
-                {
-                    if (result == kDidntFoundSubject)
-                    {
-                        fprintf (stdout, "Нет такого объекта, попробуй ещё раз\n");
-
-                        result = kDoneTreeAkin;
-                        continue;
-                    }
-
-                    return result;
-                }
-
-                break;
+                return result;
             }
 
             return ReplayAkinator (root);
@@ -138,32 +91,11 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
 
         if (strcmp (flag, kWriteFlag) == 0)
         {
-            while (result == kDoneTreeAkin)
+            result = WriteFlag (root);
+
+            if (result != kDoneTreeAkin)
             {
-                result = WriteTreeDataBase (root);
-
-                if (result != kDoneTreeAkin)
-                {
-                    if (result == kCantReadNameOfFileAkin)
-                    {
-                        fprintf (stdout, "\nНе удалось считать имя файла. Попробуй снова\n");
-
-                        result = kDoneTreeAkin;
-                        continue;
-                    }
-
-                    if (result == kCantOpenDataBase)
-                    {
-                        fprintf (stdout, "\nНе удалось открыть файл. Попробуй снова.\n");
-
-                        result = kDoneTreeAkin;
-                        continue;
-                    }
-
-                    return result;
-                }
-
-                break;
+                return result;
             }
 
             return ReplayAkinator (root);
@@ -204,7 +136,7 @@ static enum TreeErrorAkin ReplayAkinator (node_t* const root)
 
     if (answer == kTrueResult)
     {
-        result = WriteTreeDataBase (root);
+        result = WriteFlag (root);
     }
 
     return result;
