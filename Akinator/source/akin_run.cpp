@@ -11,7 +11,7 @@ static enum TreeResult    PrintResultAkin    (const tree_elem_t result);
 static enum TreeResult    PrintQuestionAkin  (const tree_elem_t result);
 static enum TreeErrorAkin AddNewElemAkin     (node_t* const node);
 
-enum TreeErrorAkin RunAkinatorFlag (node_t* const root)
+enum TreeErrorAkin RunAkinatorFlag (node_t* root)
 {
     ASSERT (root != NULL, "Invalid argument: root = %p\n", root);
 
@@ -22,37 +22,37 @@ enum TreeErrorAkin RunAkinatorFlag (node_t* const root)
 
     enum TreeResult result = kTrueResult;
 
-    if ((root->left == NULL) && (root->right == NULL))
+    while ((root->left != NULL) && (root->right != NULL))
     {
-        result = PrintResultAkin (root->data);
+        result = PrintQuestionAkin (root->data);
 
         if ((result == kCantFindAnswerForResult) || (result == kInvalAnswer))
         {
             return kRunTimeErrorAkin;
         }
 
-        if (result == kTrueResult)
-        {
-            return kDoneTreeAkin;
-        }
-
-        if (AddNewElemAkin (root) != kDoneTreeAkin)
-        {
-            return kRunTimeErrorAkin;
-        }
-
-        return kDoneTreeAkin;
+        root = (result == kTrueResult) ? root->right
+                                       : root->left;
     }
 
-    result = PrintQuestionAkin (root->data);
+    result = PrintResultAkin (root->data);
 
     if ((result == kCantFindAnswerForResult) || (result == kInvalAnswer))
     {
         return kRunTimeErrorAkin;
     }
 
-    return (result == kTrueResult) ? RunAkinatorFlag (root->right)
-                                   : RunAkinatorFlag (root->left);
+    if (result == kTrueResult)
+    {
+        return kDoneTreeAkin;
+    }
+
+    if (AddNewElemAkin (root) != kDoneTreeAkin)
+    {
+        return kRunTimeErrorAkin;
+    }
+
+    return kDoneTreeAkin;
 }
 
 static enum TreeResult PrintResultAkin (const tree_elem_t result)
