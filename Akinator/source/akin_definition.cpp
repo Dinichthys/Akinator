@@ -234,11 +234,20 @@ static enum TreeErrorAkin CompareSubjects (node_t* const root)
 static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, const stack_t second_stack)
 {
     fputc ('\n', stdout);
+    fflush (stdout);
 
     if ((stack_size (first_stack) == stack_size (second_stack))
         && (stack_size (first_stack) == 1))
     {
         fprintf (stdout, "Эти существа одинаковы и являются единственными, известными АкИнАтОрУ\n\n");
+        fflush (stdout);
+
+        if (system ("echo "
+            "\"Эти существа одинаковы и являются единственными, известными АкИнАтОрУ\" "
+            "| festival --tts --language russian") == -1)
+        {
+            return kCantPrintComparison;
+        }
 
         return kDoneTreeAkin;
     }
@@ -257,10 +266,22 @@ static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, 
     TreeErrorAkin result_first_stack  = kDoneTreeAkin;
     TreeErrorAkin result_second_stack = kDoneTreeAkin;
 
+    char command [kCommandTerminalDefLen] = "";
+
     if (stack_size (first_stack) > stack_size (second_stack))
     {
         fprintf (stdout, "Первое существо имеет больше на %lu характеристик:\n"
                          "Оно ", (stack_size (first_stack) - stack_size (second_stack)) / 2);
+        fflush (stdout);
+
+        sprintf (command, "echo "
+                          "\"Первое существо имеет больше на %lu характеристик Оно\" "
+                          "| festival --tts --language russian",
+                          (stack_size (first_stack) - stack_size (second_stack)) / 2);
+        if (system (command) == -1)
+        {
+            return kCantPrintDefinition;
+        }
     }
 
     while (stack_size (first_stack) > stack_size (second_stack))
@@ -270,6 +291,13 @@ static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, 
         if  (result_first_stack == kDoneTreeAkin)
         {
             fprintf (stdout, "%s %s, ", first_comp, first_data);
+            fflush (stdout);
+
+            sprintf (command, "echo \"%s %s\" | festival --tts --language russian", first_comp, first_data);
+            if (system (command) == -1)
+            {
+                return kCantPrintDefinition;
+            }
         }
         else
         {
@@ -281,6 +309,16 @@ static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, 
     {
         fprintf (stdout, "Второе существо имеет больше на %lu характеристик:\n"
                          "Оно ", (stack_size (second_stack) - stack_size (first_stack)) / 2);
+        fflush (stdout);
+
+        sprintf (command, "echo "
+                          "\"Второе существо имеет больше на %lu характеристик Оно\" "
+                          "| festival --tts --language russian",
+                          (stack_size (first_stack) - stack_size (second_stack)) / 2);
+        if (system (command) == -1)
+        {
+            return kCantPrintDefinition;
+        }
     }
 
     while (stack_size (second_stack) > stack_size (first_stack))
@@ -290,6 +328,13 @@ static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, 
         if  (result_second_stack == kDoneTreeAkin)
         {
             fprintf (stdout, "%s %s, ", second_comp, second_data);
+            fflush (stdout);
+
+            sprintf (command, "echo \"%s %s\" | festival --tts --language russian", second_comp, second_data);
+            if (system (command) == -1)
+            {
+                return kCantPrintDefinition;
+            }
         }
         else
         {
@@ -301,6 +346,14 @@ static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, 
     result_second_stack = GetDefinition (second_stack, &second_data, &second_comp);
 
     fprintf (stdout, "\nОстальных характеристик у существ одинаковое количество:\n");
+    fflush (stdout);
+
+    if (system ("echo "
+        "\"Остальных характеристик у существ одинаковое количество\" "
+        "| festival --tts --language russian") == -1)
+    {
+        return kCantPrintComparison;
+    }
 
     while ((result_first_stack == kDoneTreeAkin)
            && (result_second_stack == kDoneTreeAkin)
@@ -308,6 +361,16 @@ static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, 
     {
         fprintf (stdout, "\nПервое существо %s %s, а второе существо %s %s\n",
                          first_comp, first_data, second_comp, second_data);
+        fflush (stdout);
+
+        sprintf (command, "echo "
+                          "\"Первое существо %s %s, а второе существо %s %s\" "
+                          "| festival --tts --language russian",
+                          first_comp, first_data, second_comp, second_data);
+        if (system (command) == -1)
+        {
+            return kCantPrintDefinition;
+        }
 
         result_first_stack  = GetDefinition (first_stack, &first_data, &first_comp);
         result_second_stack = GetDefinition (second_stack, &second_data, &second_comp);
@@ -319,6 +382,17 @@ static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, 
         fprintf (stdout, "\nСущества различаются в признаке \"%s\"\n"
                          "Первому существу %s подходит этот признак, а второму - %s подходит\n",
                          first_data, first_comp, second_comp);
+        fflush (stdout);
+
+        sprintf (command, "echo "
+                          "\"Существа различаются в признаке %s "
+                          "Первому существу %s подходит этот признак, а второму - %s подходит\" "
+                          "| festival --tts --language russian",
+                          first_data, first_comp, second_comp);
+        if (system (command) == -1)
+        {
+            return kCantPrintDefinition;
+        }
     }
     else
     {
@@ -326,6 +400,14 @@ static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, 
     }
 
     fprintf (stdout, "\nДругие характеристики у них одинаковые:\n");
+    fflush (stdout);
+
+    if (system ("echo "
+        "\"Другие характеристики у них одинаковые\" "
+        "| festival --tts --language russian") == -1)
+    {
+        return kCantPrintComparison;
+    }
 
     return PrintDefinition (first_stack);
 }
@@ -454,10 +536,25 @@ static enum TreeErrorAkin PrintDefinition (stack_t const stack)
     stack_elem answer = NULL;
 
     fprintf (stdout, "Оно ");
+    fflush (stdout);
+
+    if (system ("echo \"Оно \" | festival --tts --language russian") == -1)
+    {
+        return kCantPrintDefinition;
+    }
+
+    char command [kCommandTerminalDefLen] = "";
 
     while ((stack_pop (stack, &answer) != CANT_POP) && (stack_pop (stack, &element) != CANT_POP))
     {
         fprintf (stdout, "%s %s, ", answer, element);
+        fflush (stdout);
+
+        sprintf (command, "echo \"%s %s\" | festival --tts --language russian", answer, element);
+        if (system (command) == -1)
+        {
+            return kCantPrintDefinition;
+        }
     }
 
     fprintf (stdout, "\n\n");

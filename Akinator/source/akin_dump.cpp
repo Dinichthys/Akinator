@@ -1,6 +1,7 @@
 #include "../akinator.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "../../My_lib/Assert/my_assert.h"
 #include "../../My_lib/Logger/logging.h"

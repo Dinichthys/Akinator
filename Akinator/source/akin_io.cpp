@@ -288,10 +288,12 @@ const char* EnumToStr (const enum TreeErrorAkin error)
 
         CASE_ENUM_ (kDidntFoundSubject);
 
+        CASE_ENUM_ (kCantPrintDefinition);
         CASE_ENUM_ (kCantMakeDefinition);
         CASE_ENUM_ (kCantCtorStackDefinition);
         CASE_ENUM_ (kCantDtorStackDefinition);
 
+        CASE_ENUM_ (kCantPrintComparison);
         CASE_ENUM_ (kCantMakeComparison);
         CASE_ENUM_ (kCantCtorStackComparison);
         CASE_ENUM_ (kCantDtorStackComparison);

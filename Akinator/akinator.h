@@ -6,6 +6,7 @@
 
 #include "../Stack/stack.h"
 
+static const size_t kCommandTerminalDefLen  = 400;
 static const size_t kCommandTerminalDumpLen = 200;
 static const size_t kLenFlag                = 100;
 static const size_t kLenFileName            = 100;
@@ -57,20 +58,20 @@ enum TreeErrorAkin
 
     kDidntFoundSubject          = 12,
 
-    kCantMakeDefinition         = 13,
+    kCantPrintDefinition        = 13,
+    kCantMakeDefinition         = 14,
+    kCantCtorStackDefinition    = 15,
+    kCantDtorStackDefinition    = 16,
 
-    kCantCtorStackDefinition    = 14,
-    kCantDtorStackDefinition    = 15,
+    kCantPrintComparison        = 17,
+    kCantMakeComparison         = 18,
+    kCantCtorStackComparison    = 19,
+    kCantDtorStackComparison    = 20,
 
-    kCantMakeComparison         = 16,
+    kNoAnswerInStack            = 21,
+    kNoDataInStack              = 22,
 
-    kCantCtorStackComparison    = 17,
-    kCantDtorStackComparison    = 18,
-
-    kNoAnswerInStack            = 19,
-    kNoDataInStack              = 20,
-
-    kInvalidFlagAkin            = 21,
+    kInvalidFlagAkin            = 23,
 };
 
 enum TreeResult
