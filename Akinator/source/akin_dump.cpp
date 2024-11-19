@@ -67,7 +67,7 @@ enum TreeErrorAkin DumpTreeAkin (const node_t* const root)
         return kCantDumpTreeAkin;
     }
 
-    fprintf (html_dump_file, "<img src = \"Dump_%lu_.svg\" width = 2450>\n<HR>\n", counter_dump);
+    fprintf (html_dump_file, "<img src = \"Dump_%lu_.svg\" width = 1450>\n<HR>\n", counter_dump);
 
     FCLOSE (html_dump_file);
 
@@ -87,25 +87,31 @@ static enum TreeErrorAkin PrintNodeInfoAkin (const node_t* const node, FILE* con
     {
         fprintf (dump_file, "\t\"node%p\"\n\t[\n"
                             "\t\tlabel = \""
-                            "{ <f0> %s |"
+                            "{ %p |"
+                            " <f0> %s |"
                             "{ <f1> left = %p |"
                             " <f2> right = %p } }\"\n"
                             "\t\tshape = \"record\"\n"
+                            "\t\tcolor = \"%s\"\n"
                             "\t];\n\n",
-                            node, node->data,
-                            node->left, node->right);
+                            node, node, node->data,
+                            node->left, node->right,
+                            kColorNodeLeaf);
     }
     else
     {
         fprintf (dump_file, "\t\"node%p\"\n\t[\n"
                             "\t\tlabel = \""
-                            "{ <f0> Оно %s? |"
+                            "{ %p |"
+                            " <f0> Оно %s? |"
                             "{ <f1> left = %p |"
                             " <f2> right = %p } }\"\n"
                             "\t\tshape = \"record\"\n"
+                            "\t\tcolor = \"%s\"\n"
                             "\t];\n\n",
-                            node, node->data,
-                            node->left, node->right);
+                            node, node, node->data,
+                            node->left, node->right,
+                            kColorNodeQuestion);
     }
 
     return kDoneTreeAkin;
@@ -147,16 +153,16 @@ static enum TreeErrorAkin PrintEdgesTreeAkin (const node_t* const root, FILE* co
     if (root->left != NULL)
     {
         fprintf (dump_file, "\t\"node%p\":f1 -> \"node%p\":f0 "
-                            "[color = \"black\" label = \"Нет\"];\n\n",
-                            root, root->left);
+                            "[color = \"black\" label = \"Нет\" color = \"%s\"];\n\n",
+                            root, root->left, kColorEdgeNo);
         PrintEdgesTreeAkin (root->left, dump_file);
     }
 
     if (root->right != NULL)
     {
         fprintf (dump_file, "\t\"node%p\":f2 -> \"node%p\":f0 "
-                            "[color = \"black\" label = \"Да\"];\n\n",
-                            root, root->right);
+                            "[color = \"black\" label = \"Да\" color = \"%s\"];\n\n",
+                            root, root->right, kColorEdgeYes);
         PrintEdgesTreeAkin (root->right, dump_file);
     }
 

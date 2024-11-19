@@ -12,6 +12,7 @@ static const size_t kLenFlag                = 100;
 static const size_t kLenFileName            = 100;
 static const size_t kLenElement             = 100;
 static const size_t kLenAnswer              = 10;
+static const size_t kLenColorName           = 10;
 static const size_t kDepthStack             = 10;
 
 static const char kRunFlag        [kLenFlag] = "Отгадывать";
@@ -20,6 +21,11 @@ static const char kDefinitionFlag [kLenFlag] = "Определение";
 static const char kComparisonFlag [kLenFlag] = "Сравнение";
 static const char kWriteFlag      [kLenFlag] = "Запись";
 static const char kExitFlag       [kLenFlag] = "Выход";
+
+static const char kColorNodeLeaf     [kLenColorName] = "green";
+static const char kColorNodeQuestion [kLenColorName] = "brown";
+static const char kColorEdgeYes      [kLenColorName] = "blue";
+static const char kColorEdgeNo       [kLenColorName] = "red";
 
 typedef char tree_elem_t [kLenElement];
 
