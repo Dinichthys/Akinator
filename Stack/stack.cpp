@@ -534,6 +534,41 @@ enum STACK_ERROR stack_pop (const size_t stack_encode, stack_elem* const element
     return error;
 }
 
+size_t stack_size (const size_t stack_encode)
+{
+    stack* const stk = (stack*) (stack_encode ^ KEY);
+
+    if ((stk == NULL) || (stack_ok (stk) != DONE))
+    {
+        return CANT_PUSH;
+    }
+
+    #ifdef CANARY_PROT
+
+    if (check_canary (stk))
+    {
+        return CANT_PUSH;
+    }
+
+    #endif // CANARY_PROT
+
+    #ifdef HASH_PROT
+
+    if (stk->hash_stack != hashing ((const uint8_t*) stk, sizeof (stack) - sizeof (stk->hash_stack)))
+    {
+        return CANT_PUSH;
+    }
+
+    if (stk->hash_data != hashing ((const uint8_t*) stk->data, stk->capacity * sizeof (stack_elem)))
+    {
+        return CANT_PUSH;
+    }
+
+    #endif // HASH_PROT
+
+    return stk->size;
+}
+
 enum STACK_ERROR dump (const size_t stack_encode, const char* const file, const int line)
 {
     stack* const stk = (stack*) (stack_encode ^ KEY);

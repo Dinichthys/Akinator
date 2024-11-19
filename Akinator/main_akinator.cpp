@@ -11,7 +11,8 @@
     if (error != kDoneTreeAkin)                                         \
     {                                                                   \
         fprintf (stderr, "Error number = {%d}\n"                        \
-                         "Error is \"%s\"\n", error, EnumToStr (error));  \
+                         "Error is \"%s\"\n", error, EnumToStr (error));\
+        DumpTreeAkin (&root);                                           \
         TreeDtorAkin (&root);                                           \
         fclose (error_file);                                            \
         return EXIT_FAILURE;                                            \

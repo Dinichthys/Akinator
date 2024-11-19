@@ -62,10 +62,15 @@ enum TreeErrorAkin
     kCantCtorStackDefinition    = 14,
     kCantDtorStackDefinition    = 15,
 
-    kCantCtorStackComparison    = 16,
-    kCantDtorStackComparison    = 17,
+    kCantMakeComparison         = 16,
 
-    kInvalidFlagAkin            = 18,
+    kCantCtorStackComparison    = 17,
+    kCantDtorStackComparison    = 18,
+
+    kNoAnswerInStack            = 19,
+    kNoDataInStack              = 20,
+
+    kInvalidFlagAkin            = 21,
 };
 
 enum TreeResult

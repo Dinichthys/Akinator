@@ -12,6 +12,8 @@
 static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, const stack_t second_stack);
 static enum TreeErrorAkin MakeDefinition            (node_t* const node, const tree_elem_t subject,
                                                      stack_t const stack, const bool answer);
+static enum TreeErrorAkin GetDefinition             (const stack_t stk,
+                                                     stack_elem* const data, stack_elem* const answer);
 static enum TreeErrorAkin PrintDefinition           (stack_t const stack);
 
 enum TreeErrorAkin CompareSubjects (node_t* const root)
@@ -167,87 +169,101 @@ enum TreeErrorAkin DefinitionFlag (node_t* const root)
 
 static enum TreeErrorAkin PrintComparisonDefinition (const stack_t first_stack, const stack_t second_stack)
 {
+    fputc ('\n', stdout);
+
+    if ((stack_size (first_stack) == stack_size (second_stack))
+        && (stack_size (first_stack) == 1))
+    {
+        fprintf (stdout, "Эти существа одинаковы и являются единственными, известными АкИнАтОрУ\n\n");
+
+        return kDoneTreeAkin;
+    }
+
+    LOG (DEBUG, "Size of first  stack = %lu\n"
+                "Size of second stack = %lu\n",
+                stack_size (first_stack), stack_size (second_stack));
+
+
     stack_elem first_data = NULL;
     stack_elem second_data = NULL;
 
     stack_elem first_comp = NULL;
     stack_elem second_comp = NULL;
 
-    STACK_ERROR result_first_stack = DONE;
-    STACK_ERROR result_second_stack = DONE;
+    TreeErrorAkin result_first_stack  = kDoneTreeAkin;
+    TreeErrorAkin result_second_stack = kDoneTreeAkin;
 
-    result_first_stack = stack_pop (first_stack, &first_comp);
-
-    if (result_first_stack != CANT_POP)
+    if (stack_size (first_stack) > stack_size (second_stack))
     {
-        LOG (DEBUG, "First comparison = \"%s\"\n", first_comp);
+        fprintf (stdout, "Первое существо имеет больше на %lu характеристик:\n"
+                         "Оно ", (stack_size (first_stack) - stack_size (second_stack)) / 2);
+    }
 
-        result_first_stack = stack_pop (first_stack, &first_data);
+    while (stack_size (first_stack) > stack_size (second_stack))
+    {
+        result_first_stack = GetDefinition (first_stack, &first_data, &first_comp);
 
-        if (result_first_stack != CANT_POP)
+        if  (result_first_stack == kDoneTreeAkin)
         {
-            LOG (DEBUG, "First data = \"%s\"\n", first_data);
+            fprintf (stdout, "%s %s, ", first_comp, first_data);
+        }
+        else
+        {
+            break;
         }
     }
 
-    result_second_stack = stack_pop (second_stack, &second_comp);
-
-    if (result_second_stack != CANT_POP)
+    if (stack_size (second_stack) > stack_size (first_stack))
     {
-        LOG (DEBUG, "Second comparison = \"%s\"\n", second_comp);
+        fprintf (stdout, "Второе существо имеет больше на %lu характеристик:\n"
+                         "Оно ", (stack_size (second_stack) - stack_size (first_stack)) / 2);
+    }
 
-        result_second_stack = stack_pop (second_stack, &second_data);
+    while (stack_size (second_stack) > stack_size (first_stack))
+    {
+        result_second_stack = GetDefinition (second_stack, &second_data, &second_comp);
 
-        if (result_second_stack != CANT_POP)
+        if  (result_second_stack == kDoneTreeAkin)
         {
-            LOG (DEBUG, "Second data = \"%s\"\n", second_data);
+            fprintf (stdout, "%s %s, ", second_comp, second_data);
+        }
+        else
+        {
+            break;
         }
     }
 
-    if ((result_first_stack == CANT_POP) && (result_second_stack == CANT_POP))
-    {
-        fprintf (stdout, "\nСравнение завершено)\n\n");
+    result_first_stack  = GetDefinition (first_stack, &first_data, &first_comp);
+    result_second_stack = GetDefinition (second_stack, &second_data, &second_comp);
 
-        return kDoneTreeAkin;
-    }
+    fprintf (stdout, "\nОстальных характеристик у существ одинаковое количество:\n");
 
-    if ((result_first_stack != CANT_POP)
-        && (result_second_stack != CANT_POP)
-        && (strcmp (first_data, second_data) == 0)
-        && (strcmp (first_comp, second_comp) == 0))
-    {
-        fprintf (stdout, "\nДругие характеристики у них одинаковые:\n"
-                         "Оно %s %s, ", first_comp, first_data);
-
-        return PrintDefinition (first_stack);
-    }
-
-    if ((result_first_stack != CANT_POP)
-        && (result_second_stack != CANT_POP))
+    while ((result_first_stack == kDoneTreeAkin)
+           && (result_second_stack == kDoneTreeAkin)
+           && (strcmp (first_data, second_data) != 0))
     {
         fprintf (stdout, "\nПервое существо %s %s, а второе существо %s %s\n",
                          first_comp, first_data, second_comp, second_data);
+
+        result_first_stack  = GetDefinition (first_stack, &first_data, &first_comp);
+        result_second_stack = GetDefinition (second_stack, &second_data, &second_comp);
     }
 
-    if ((result_first_stack != CANT_POP)
-        && (result_second_stack == CANT_POP))
+    if ((result_first_stack == kDoneTreeAkin)
+        && (result_second_stack == kDoneTreeAkin))
     {
-        fprintf (stdout, "\nВторое существо не имеет больше характеристик, а первое такое: \n"
-                         "Оно %s %s, ", first_comp, first_data);
-
-        return PrintDefinition (first_stack);
+        fprintf (stdout, "\nСущества различаются в признаке \"%s\"\n"
+                         "Первому существу %s подходит этот признак, а второму - %s подходит\n",
+                         first_data, first_comp, second_comp);
     }
-
-    if ((result_first_stack == CANT_POP)
-        && (result_second_stack != CANT_POP))
+    else
     {
-        fprintf (stdout, "\nПервое существо не имеет больше характеристик, а второе такое: \n"
-                         "Оно %s %s, ", second_comp, second_data);
-
-        return PrintDefinition (second_stack);
+        return kCantMakeComparison;
     }
 
-    return PrintComparisonDefinition (first_stack, second_stack);
+    fprintf (stdout, "\nДругие характеристики у них одинаковые:\n");
+
+    return PrintDefinition (first_stack);
 }
 
 static enum TreeErrorAkin MakeDefinition (node_t* const node, const tree_elem_t subject,
@@ -342,17 +358,45 @@ static enum TreeErrorAkin MakeDefinition (node_t* const node, const tree_elem_t 
     return result;
 }
 
+static enum TreeErrorAkin GetDefinition (const stack_t stk, stack_elem* const data, stack_elem* const answer)
+{
+    ASSERT (data   != NULL, "Invalid argument data = %p\n",   data);
+    ASSERT (answer != NULL, "Invalid argument answer = %p\n", answer);
+
+    STACK_ERROR result = stack_pop (stk, answer);
+
+    if (result != CANT_POP)
+    {
+        LOG (DEBUG, "First comparison = \"%s\"\n", *answer);
+
+        result = stack_pop (stk, data);
+
+        if (result != CANT_POP)
+        {
+            LOG (DEBUG, "First data = \"%s\"\n", *data);
+
+            return kDoneTreeAkin;
+        }
+
+        return kNoDataInStack;
+    }
+
+    return kNoAnswerInStack;
+}
+
 static enum TreeErrorAkin PrintDefinition (stack_t const stack)
 {
     stack_elem element = NULL;
     stack_elem answer = NULL;
 
+    fprintf (stdout, "Оно ");
+
     while ((stack_pop (stack, &answer) != CANT_POP) && (stack_pop (stack, &element) != CANT_POP))
     {
-        fprintf (stdout, "Оно %s %s, ", answer, element);
+        fprintf (stdout, "%s %s, ", answer, element);
     }
 
-    fputc ('\n', stdout);
+    fprintf (stdout, "\n\n");
 
     return kDoneTreeAkin;
 }

@@ -103,6 +103,7 @@ enum STACK_ERROR stack_ctor (size_t* const stack_encode, const size_t num_elem,
 enum STACK_ERROR stack_dtor (const size_t stack_encode);
 enum STACK_ERROR stack_push (const size_t stack_encode, const stack_elem element);
 enum STACK_ERROR stack_pop  (const size_t stack_encode, stack_elem* const element);
+size_t stack_size           (const size_t stack_encode);
 enum STACK_ERROR dump       (const size_t stack_encode, const char* const file, const int line);
 const char* decoder_error   (const int error);
 
