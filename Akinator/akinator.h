@@ -85,7 +85,7 @@ enum TreeErrorAkin ParseFlags      (node_t* const root);
 enum TreeErrorAkin RunAkinatorFlag (node_t* const root);
 enum TreeResult    GetAnswer       (void);
 enum TreeErrorAkin CreateFlag      (node_t* const root);
-enum TreeErrorAkin WriteFlag       (node_t* const root);
+enum TreeErrorAkin WriteFlag       (const node_t* const root);
 enum TreeErrorAkin DefinitionFlag  (node_t* const root);
 enum TreeErrorAkin ComparisonFlag  (node_t* const root);
 enum TreeErrorAkin TreeCtorAkin    (node_t* const node, const tree_elem_t data);

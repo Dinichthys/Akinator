@@ -10,7 +10,7 @@
 #include "../../My_lib/helpful.h"
 
 static enum TreeErrorAkin CreateTreeFromDataBaseFlag (node_t* const root);
-static enum TreeErrorAkin WriteTreeDataBase          (node_t* const root);
+static enum TreeErrorAkin WriteTreeDataBase          (const node_t* const root);
 static enum TreeErrorAkin ReadTreeDataBase           (node_t* const node, char** const input_buffer);
 static enum TreeErrorAkin WriteTreeDataBaseInFile    (const node_t* const node,
                                                       const size_t depth, FILE* const output);
@@ -54,7 +54,7 @@ enum TreeErrorAkin CreateFlag (node_t* const root)
     return result;
 }
 
-enum TreeErrorAkin WriteFlag (node_t* const root)
+enum TreeErrorAkin WriteFlag (const node_t* const root)
 {
     ASSERT (root != NULL, "Invalid argument root = %p\n", root);
 
@@ -143,7 +143,7 @@ static enum TreeErrorAkin CreateTreeFromDataBaseFlag (node_t* const root)
     return result;
 }
 
-static enum TreeErrorAkin WriteTreeDataBase (node_t* const root)
+static enum TreeErrorAkin WriteTreeDataBase (const node_t* const root)
 {
     ASSERT (root != NULL, "Invalid argument root = %p\n", root);
 

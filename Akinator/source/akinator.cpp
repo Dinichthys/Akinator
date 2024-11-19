@@ -10,7 +10,9 @@
 #include "../../My_lib/My_stdio/my_stdio.h"
 #include "../../My_lib/helpful.h"
 
-static enum TreeErrorAkin ReplayAkinator     (node_t* const root);
+static void PrintMenu (void);
+static bool ReplayAkinator (node_t* const root);
+static enum TreeErrorAkin EndAkinator (const node_t* const root);
 
 enum TreeErrorAkin ParseFlags (node_t* const root)
 {
@@ -20,18 +22,10 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
 
     enum TreeErrorAkin result = kDoneTreeAkin;
 
-    fprintf (stdout, "Это Великий и Ужасный Акинатор!\n"
-                     "Для продолжения напиши:\n"
-                     " \"%s\" - чтобы Акинатор отгадал твоё СуЩеСтВо\n"
-                     " \"%s\"    - чтобы создать дерево вариантов ответов по базе данных\n"
-                     " \"%s\"- чтобы дать определение вашего сУщЕсТвА\n"
-                     " \"%s\"  - чтобы сравнить два ваших СУЩЕСТВА\n"
-                     " \"%s\"     - чтобы записать информацию о дереве в файл\n"
-                     " \"%s\"      - чтобы выйти из программы\n",
-                     kRunFlag, kCreateFlag, kDefinitionFlag, kComparisonFlag, kWriteFlag, kExitFlag);
-
     while (true)
     {
+        PrintMenu ();
+
         if (fscanf (stdin, "%[^ ^\n^\t^\r]", flag) == EOF)
         {
             return kInvalidFlagAkin;
@@ -50,7 +44,14 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
                 return result;
             }
 
-            return ReplayAkinator (root);
+            if (ReplayAkinator (root))
+            {
+                continue;
+            }
+            else
+            {
+                return EndAkinator (root);
+            }
         }
 
         if (strcmp (flag, kCreateFlag) == 0)
@@ -62,7 +63,14 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
                 return result;
             }
 
-            return ReplayAkinator (root);
+            if (ReplayAkinator (root))
+            {
+                continue;
+            }
+            else
+            {
+                return EndAkinator (root);
+            }
         }
 
         if (strcmp (flag, kDefinitionFlag) == 0)
@@ -74,7 +82,14 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
                 return result;
             }
 
-            return ReplayAkinator (root);
+            if (ReplayAkinator (root))
+            {
+                continue;
+            }
+            else
+            {
+                return EndAkinator (root);
+            }
         }
 
         if (strcmp (flag, kComparisonFlag) == 0)
@@ -86,7 +101,14 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
                 return result;
             }
 
-            return ReplayAkinator (root);
+            if (ReplayAkinator (root))
+            {
+                continue;
+            }
+            else
+            {
+                return EndAkinator (root);
+            }
         }
 
         if (strcmp (flag, kWriteFlag) == 0)
@@ -98,12 +120,19 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
                 return result;
             }
 
-            return ReplayAkinator (root);
+            if (ReplayAkinator (root))
+            {
+                continue;
+            }
+            else
+            {
+                return EndAkinator (root);
+            }
         }
 
         if (strcmp (flag, kExitFlag) == 0)
         {
-            return kDoneTreeAkin;
+            return EndAkinator (root);
         }
 
         fprintf (stdout, "Ответ не распознан.\nПерепроверь правописание и повтори запрос.\n");
@@ -112,11 +141,22 @@ enum TreeErrorAkin ParseFlags (node_t* const root)
     return kInvalidFlagAkin;
 }
 
-static enum TreeErrorAkin ReplayAkinator (node_t* const root)
+static void PrintMenu (void)
+{
+    fprintf (stdout, "Это Великий и Ужасный Акинатор!\n"
+                     "Для продолжения напиши:\n"
+                     " \"%s\" - чтобы Акинатор отгадал твоё СуЩеСтВо\n"
+                     " \"%s\"    - чтобы создать дерево вариантов ответов по базе данных\n"
+                     " \"%s\"- чтобы дать определение вашего сУщЕсТвА\n"
+                     " \"%s\"  - чтобы сравнить два ваших СУЩЕСТВА\n"
+                     " \"%s\"     - чтобы записать информацию о дереве в файл\n"
+                     " \"%s\"      - чтобы выйти из программы\n",
+                     kRunFlag, kCreateFlag, kDefinitionFlag, kComparisonFlag, kWriteFlag, kExitFlag);
+}
+
+static bool ReplayAkinator (node_t* const root)
 {
     ASSERT (root != NULL, "Invalid argument root = %p\n", root);
-
-    enum TreeErrorAkin result = kDoneTreeAkin;
 
     fprintf (stdout, "Хочешь ещё раз?)\n"
                      "Тогда напиши \"Да\"\n");
@@ -127,10 +167,19 @@ static enum TreeErrorAkin ReplayAkinator (node_t* const root)
 
     if (GetAnswer () == kTrueResult)
     {
-        return ParseFlags (root);
+        return true;
     }
 
-    fprintf (stdout, "Хочешь записать дерево в файл?\n");
+    return false;
+}
+
+static enum TreeErrorAkin EndAkinator (const node_t* const root)
+{
+    ASSERT (root != NULL, "Invalid argument root = %p\n", root);
+
+    enum TreeErrorAkin result = kDoneTreeAkin;
+
+    fprintf (stdout, "\nХочешь записать дерево в файл?\n");
 
     enum TreeResult answer = GetAnswer ();
 
