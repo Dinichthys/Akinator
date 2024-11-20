@@ -167,6 +167,7 @@ static bool ReplayAkinator (node_t* const root)
 
     if (GetAnswer () == kTrueResult)
     {
+        fputc ('\n', stdout);
         return true;
     }
 

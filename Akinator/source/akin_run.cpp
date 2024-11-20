@@ -44,7 +44,7 @@ enum TreeErrorAkin RunAkinatorFlag (node_t* root)
 
     if (result == kTrueResult)
     {
-        fprintf (stdout, "ХА! Так и знал, что у меня всё получится😎)))");
+        fprintf (stdout, "ХА! Так и знал, что у меня всё получится😎)))\т\т");
 
         return kDoneTreeAkin;
     }
@@ -128,6 +128,8 @@ static enum TreeErrorAkin AddNewElemAkin (node_t* const node)
         PushNodeAkin (node, node->data, false);
         strcpy (node->data, question);
     }
+
+    fputc ('\n', stdout);
 
     return kDoneTreeAkin;
 }
