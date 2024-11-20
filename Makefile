@@ -2,6 +2,8 @@ CXXFLAGS = -D _DEBUG  -ggdb -g3 -D_FORTIFY_SOURCES=3 -std=c++17 -Og -Wall -Wextr
 
 CXX = g++
 
+FESTIVALFLAG = -lfestival
+
 WARNINGS = -Wall -Wextra
 # -Wswitch-enum
 ifeq ($(CXX), clang++)
@@ -18,7 +20,7 @@ endif
 all: akinator tree_compare
 
 akinator: build build_akin build_stack clean_dump main_akinator.o akinator.o akin_answer.o akin_definition.o akin_dump.o akin_io.o akin_run.o akin_structure.o stack my_stdio.o logging.o print_error.o
-	@$(CXX) $(CXXFLAGS) build/akinator/*.o build/stack/*.o build/my_stdio.o build/logging.o build/print_error.o -o akinator
+	@$(CXX) $(CXXFLAGS) $(FESTIVAL) build/akinator/*.o build/stack/*.o build/my_stdio.o build/logging.o build/print_error.o -o akinator
 
 tree_compare: build build_comp clean_dump main_tree_compare.o tree_compare.o logging.o print_error.o
 	@$(CXX) $(CXXFLAGS) build/tree_compare/*.o build/logging.o build/print_error.o -o tree
@@ -67,7 +69,7 @@ akin_answer.o: Akinator/source/akin_answer.cpp
 	@$(CXX) $(CXXFLAGS) -c Akinator/source/akin_answer.cpp -o build/akinator/akin_answer.o
 
 akin_definition.o: Akinator/source/akin_definition.cpp
-	@$(CXX) $(CXXFLAGS) -c Akinator/source/akin_definition.cpp -o build/akinator/akin_definition.o
+	@$(CXX) $(CXXFLAGS) $(FESTIVAL) -c Akinator/source/akin_definition.cpp -o build/akinator/akin_definition.o
 
 akin_dump.o: Akinator/source/akin_dump.cpp
 	@$(CXX) $(CXXFLAGS) -c Akinator/source/akin_dump.cpp -o build/akinator/akin_dump.o
