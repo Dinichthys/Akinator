@@ -44,7 +44,7 @@ enum TreeErrorAkin RunAkinatorFlag (node_t* root)
 
     if (result == kTrueResult)
     {
-        fprintf (stdout, "ХА! Так и знал, что у меня всё получится😎)))\т\т");
+        fprintf (stdout, "ХА! Так и знал, что у меня всё получится😎)))\n\n");
 
         return kDoneTreeAkin;
     }
